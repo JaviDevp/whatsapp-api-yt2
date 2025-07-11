@@ -8,7 +8,11 @@ export class VenomTransporter implements LeadExternal {
   constructor() {
     create({ session: "session" }).then((client) => (this.intance = client));
   }
-  sendMsg(lead: { message: string; phone: string }): Promise<any> {
+  sendMsg(lead: {
+    message: string;
+    phone: string;
+    fileBase64?: string;
+  }): Promise<any> {
     try {
       const { message, phone } = lead;
       const response = this.intance?.sendText(`${phone}@c.us`, message);

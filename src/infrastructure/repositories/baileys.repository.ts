@@ -75,9 +75,11 @@ export class BaileysTransporter implements LeadExternal {
   async sendMsg({
     message,
     phone,
+    fileBase64,
   }: {
     message: string;
     phone: string;
+    fileBase64?: string;
   }): Promise<any> {
     try {
       const response = await this.connection?.sendMessage(phone + "@c.us", {

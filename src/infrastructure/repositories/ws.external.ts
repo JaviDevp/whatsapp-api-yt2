@@ -1,4 +1,4 @@
-import { Client, LocalAuth } from "whatsapp-web.js";
+import { Client, LocalAuth, MessageMedia } from "whatsapp-web.js";
 import { image as imageQr } from "qr-image";
 import LeadExternal from "../../domain/lead-external.repository";
 
@@ -45,11 +45,22 @@ class WsTransporter extends Client implements LeadExternal {
    * @param lead
    * @returns
    */
-  async sendMsg(lead: { message: string; phone: string }): Promise<any> {
+  async sendMsg(lead: {
+    message: string;
+    phone: string;
+    fileBase64?: string;
+  }): Promise<any> {
     try {
       if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
-      const { message, phone } = lead;
-      const response = await this.sendMessage(`${phone}@c.us`, message);
+      const { message, phone, fileBase64 } = lead;
+      let response;
+      if (fileBase64) {
+        const base64Data = fileBase64.split(',').pop() ?? fileBase64;
+        const media = new MessageMedia("application/octet-stream", base64Data, "file");
+        response = await this.sendMessage(`${phone}@c.us`, media, { caption: message });
+      } else {
+        response = await this.sendMessage(`${phone}@c.us`, message);
+      }
       return { id: response.id.id };
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
