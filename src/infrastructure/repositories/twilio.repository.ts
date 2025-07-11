@@ -13,9 +13,11 @@ export default class TwilioService extends Twilio implements LeadExternal {
   async sendMsg({
     message,
     phone,
+    fileBase64,
   }: {
     message: string;
     phone: string;
+    fileBase64?: string;
   }): Promise<any> {
     try{
         const parsePhone = `+${phone}`
